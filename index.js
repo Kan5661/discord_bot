@@ -2,6 +2,7 @@ const { Client, IntentsBitField } = require('discord.js');
 const cron = require('node-cron');
 const dotenv = require('dotenv');
 
+
 dotenv.config();
 
 const client = new Client({
