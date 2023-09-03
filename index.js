@@ -14,7 +14,7 @@ const client = new Client({
 });
 ;
 
-const users_to_ping = ['531580229152538635']
+const users_to_ping = [process.env.KAN, process.env.RADIATED_BALLS, process.env.LOSER_EPIC]
 const pingUsers = users_to_ping.map(id => `<@${id}>`).join(' ');
 
 let sendPings = true
