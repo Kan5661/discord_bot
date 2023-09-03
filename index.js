@@ -22,7 +22,7 @@ let sendPings = true
 client.on('ready', (c) => {
   console.log(`Logged in as ${c.user.tag}!`);
 
-  cron.schedule('45 23 * * 0,3,5,6', async () => {
+  cron.schedule('4 12 * * 0,3,5,6', async () => {
     if (sendPings) {
       const guild = client.guilds.cache.get(process.env.SERVER_ID);
       if (!guild) return console.log('Guild not found');
