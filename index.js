@@ -18,7 +18,7 @@ const client = new Client({
 const users_to_ping = [process.env.KAN, process.env.RADIATED_BALLS, process.env.LOSER_EPIC]
 const pingUsers = users_to_ping.map(id => `<@${id}>`).join(' ');
 
-let sendPings = true
+let sendPings = false
 const timeZone = 'America/New_York';
 
 client.on('ready', (c) => {
