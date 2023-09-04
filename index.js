@@ -13,18 +13,17 @@ const client = new Client({
     IntentsBitField.Flags.MessageContent,
   ],
 });
-;
+
 
 const users_to_ping = [process.env.KAN, process.env.RADIATED_BALLS, process.env.LOSER_EPIC]
 const pingUsers = users_to_ping.map(id => `<@${id}>`).join(' ');
 
-let sendPings = false
-const timeZone = 'America/New_York';
+let sendPings = false;
 
 client.on('ready', (c) => {
     console.log(`Logged in as ${c.user.tag}!`);
 
-    cron.schedule('59 23 * * 0,3,5', async () => {
+    cron.schedule('59 0 * * 1,4,6', async () => {
       console.log('Cron job triggered for sending pings');
       if (sendPings) {
         console.log('Sending pings is enabled.');
@@ -43,11 +42,7 @@ client.on('ready', (c) => {
       } else {
         console.log('Sending pings is disabled.');
       }
-    },
-    {
-        scheduled: true,
-        timezone: timeZone
-      }
+    }
     );
   
     cron.schedule('0 0 * * 1', () => {
@@ -59,8 +54,6 @@ client.on('ready', (c) => {
 
 client.on('messageCreate', message => {
     if (message.author.bot) return;
-
-    console.log(`Received message from ${message.author.tag}: ${message.content}`);
 
     if (message.content.toLowerCase() === '!test') {
         message.channel.send('beep bop im ur CL reminder bot!');
