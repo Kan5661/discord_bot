@@ -52,20 +52,5 @@ client.on('ready', (c) => {
     });
   });
 
-client.on('messageCreate', message => {
-    if (message.author.bot) return;
-
-    if (message.content.toLowerCase() === '!test') {
-        message.channel.send('beep bop im ur CL reminder bot!');
-    } 
-});
-
-client.on('interactionCreate',  (interaction) => {
-    if (!interaction.isChatInputCommand()) return
-
-    if (interaction.commandName === 'hey') {
-        interaction.reply('hey there!')
-    }
-})
 
 client.login(process.env.BOT_TOKEN);
