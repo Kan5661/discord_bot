@@ -15,13 +15,25 @@ const client = new Client({
 });
 
 
-const users_to_ping = [process.env.KAN, process.env.RADIATED_BALLS, process.env.LOSER_EPIC]
+const users_to_ping = [
+    process.env.KAN,
+    process.env.RADIATED_BALLS,
+    process.env.LOSER_EPIC
+  ]
 const pingUsers = users_to_ping.map(id => `<@${id}>`).join(' ');
 
-let sendPings = false;
+function LogWeek() {
+  if (sendPings) {
+    console.log("It is CL week")
+  }
+  else console.log("it is quest week")
+}
+
+let sendPings = true;
 
 client.on('ready', (c) => {
-    console.log(`Logged in as ${c.user.tag}!`);
+    console.log(`BOT ${c.user.tag} is online`);
+    LogWeek();
 
     cron.schedule('59 0 * * 1,4,6', async () => {
       console.log('Cron job triggered for sending pings');
@@ -45,10 +57,10 @@ client.on('ready', (c) => {
     }
     );
   
-    cron.schedule('0 0 * * 1', () => {
-      console.log('Cron job triggered for toggling sendPings state');
+    cron.schedule('15 2 * * 1', () => {
       sendPings = !sendPings;
       console.log(`Toggled sendPings to ${sendPings}`);
+      logWeek();
     });
   });
 
