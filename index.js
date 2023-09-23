@@ -64,5 +64,13 @@ client.on('ready', (c) => {
     });
   });
 
+// if message contains "hw or homework" then bot says "nerd" 50% of the time
+client.on('messageCreate', (message) => {
+  if (Math.random() < 0.5 && message.author.id == process.env.RADIATED_BALLS) {
+    if (message.content.toLowerCase().includes('hw') || message.content.toLowerCase().includes('homework')) {
+      message.reply('nerd');
+    }
+  }
+});
 
 client.login(process.env.BOT_TOKEN);
