@@ -47,17 +47,17 @@ client.on('ready', (c) => {
     
         try {
           await channel.send(`${pingUsers}, time for CL u mfs`);
-          console.log('Message sent successfully');
+          console.log('User pinged successfully');
         } catch (error) {
           console.error('Error sending the message:', error);
         }
       } else {
-        console.log('Sending pings is disabled.');
+        console.log('Sending pings is disabled. it is Quest week');
       }
     }
     );
   
-    cron.schedule('15 2 * * 1', () => {
+    cron.schedule('15 1 * * 1', () => {
       sendPings = !sendPings;
       console.log(`Toggled sendPings to ${sendPings}`);
       logWeek();
