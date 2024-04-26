@@ -51,14 +51,7 @@ client.on("messageCreate", async (message) => {
         const coin = Math.random() < 0.5 ? "heads" : "tails";
         message.reply(coin);
     }
-    if (message.content.toLowerCase().includes("fuck") && message.author.id == process.env.MISS || message.author.id == process.env.KAN) {
-        if (Math.random() > 0.5) {
-            setTimeout(() => {
-                message.reply("HEY U RELAX RN");
-                console.log(message.author);
-            }, 1000);
-        }
-    }
+
 });
 
 client.login(process.env.BOT_TOKEN);
