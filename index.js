@@ -30,6 +30,9 @@ client.on("ready", (c) => {
 });
 
 client.on("messageCreate", async (message) => {
+    if (message.author.bot) return
+
+    // absoultely random stuff
     if (
         Math.random() < 0.5 &&
         message.author.id == process.env.RADIATED_BALLS
@@ -39,18 +42,14 @@ client.on("messageCreate", async (message) => {
             message.reply(rand_choice(bot_replies));
         }
     }
-    if (
-        Math.random() < 0.75 &&
-        (message.content.toLowerCase().includes("are trash") ||
-            message.content.toLowerCase().includes("is trash"))
-    ) {
-        message.reply("skill issue <:no_skill:1157433009411199056>");
-    }
 
     if (message.content.toLowerCase() == "!flipcoin") {
         const coin = Math.random() < 0.5 ? "heads" : "tails";
         message.reply(coin);
     }
+
+    // detect video link, download it, and sent to chat
+
 
 });
 
