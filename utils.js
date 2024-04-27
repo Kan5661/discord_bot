@@ -1,6 +1,10 @@
 const fs = require('fs');
 const { format } = require('path');
 const ytdl = require('ytdl-core');
+const { promisify } = require('util');
+const stream = require('stream');
+const { tikdown, ndown, ytdown, twitterdown } = require("nayan-media-downloader")
+const pipeline = promisify(stream.pipeline);
 
 const rand_choice = (choices) => {
     var index = Math.floor(Math.random() * choices.length);
@@ -24,6 +28,22 @@ const yt_download = (url) => {
     });
 };
 
+const get_insta_download_url = async (url) => {
+    const info = await ndown(url)
+    return info.data[0].url
+}
+
+const get_tiktok_download_url = async (url) => {
+    const info = await tikdown(url)
+    console.log(info)
+    return info.data.video
+}
+
+const get_twitter_download_url = async (url) => {
+    const info = await twitterdown(url)
+    console.log(info)
+    return info.data.HD
+}
 
 const get_vid = (filePath) => {
     try {
@@ -36,9 +56,8 @@ const get_vid = (filePath) => {
 }
 
 
-const delete_yt = () => {
-    const file_path = './output/yt_short.mp4'
-    fs.unlink(file_path, (err) => {
+const delete_file = (delete_file_path) => {
+    fs.unlink(delete_file_path, (err) => {
         if (err) {
             console.error(err)
         } else {
@@ -48,4 +67,23 @@ const delete_yt = () => {
 }
 
 
-module.exports = { rand_choice, yt_download, get_vid, delete_yt };
+const download_file_from_url = async (url, filePath) => {
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+    }
+
+    const fileStream = fs.createWriteStream(filePath);
+    await pipeline(response.body, fileStream);
+
+    console.log('Download completed');
+    return true
+  } catch (error) {
+    throw new Error(`Error downloading: ${error.message}`);
+  }
+};
+
+
+module.exports = { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url, get_tiktok_download_url, get_twitter_download_url };
