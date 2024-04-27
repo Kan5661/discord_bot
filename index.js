@@ -1,5 +1,6 @@
 const { Client, IntentsBitField } = require("discord.js");
-const { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url, get_tiktok_download_url, get_twitter_download_url } = require("./utils");
+const { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url } = require("./utils");
 
 // const cron = require("node-cron");
 const dotenv = require("dotenv");
@@ -54,14 +55,14 @@ client.on('interactionCreate', async (interaction) => {
         const url = interaction.options.get('url').value;
 
         // yt shorts
-        if (url.includes("youtube.com/shorts")) {
+        if (url.includes("youtube.com")) {
             try {
                 const video = await yt_download(url);
                 const vid_file = './output/yt_short.mp4'
                 console.log(video);
                 if (video) {
-                    const file = await get_vid(vid_file);
                     interaction.reply("downloading video....")
+                    const file = await get_vid(vid_file);
                     await interaction.channel.send({ files: [{
                         attachment: file,
                         contentType: "video/mp4",
@@ -77,8 +78,37 @@ client.on('interactionCreate', async (interaction) => {
             return
         }
 
+
+        // if (url.includes("youtube.com")) {
+        //     const download_url = await get_yt_download_url(url)
+        //     const vid_file = './output/yt_vid.mp4'
+
+        //     try {
+        //         const video = await download_file_from_url(download_url, vid_file)
+        //         if (video) {
+        //             const file = await get_vid(vid_file);
+        //             interaction.reply("downloading video....")
+        //             await interaction.channel.send({ files: [{
+        //                 attachment: file,
+        //                 contentType: "video/mp4",
+        //                 name: "fked_mc_download.mp4",
+        //             }] });
+        //             interaction.channel.send(`nice short bozo <@${interaction.user.id}>`)
+        //             interaction.deleteReply()
+        //             delete_file(vid_file)
+        //         }
+
+        //     } catch (error) {
+        //         console.error("error: ", error)
+        //     }
+
+        //     return
+        // }
+
+
+
         // insta reels / fb post
-        if (url.includes("instagram.com/reel/") || url.includes("www.facebook.com")) {
+        if (url.includes("instagram.com/reels/") || url.includes("www.facebook.com")) {
             const download_url = await get_insta_download_url(url)
             const vid_file = './output/insta_reel.mp4'
 

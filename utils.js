@@ -28,6 +28,11 @@ const yt_download = (url) => {
     });
 };
 
+const get_yt_download_url = async (url) => {
+    const info = await ytdown(url)
+    console.log(info)
+}
+
 const get_insta_download_url = async (url) => {
     const info = await ndown(url)
     return info.data[0].url
@@ -86,4 +91,4 @@ const download_file_from_url = async (url, filePath) => {
 };
 
 
-module.exports = { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url, get_tiktok_download_url, get_twitter_download_url };
+module.exports = { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url, get_tiktok_download_url, get_twitter_download_url, get_yt_download_url };
