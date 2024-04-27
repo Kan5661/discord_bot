@@ -4,7 +4,7 @@ require('dotenv').config();
 const commands = [
     {
         name: "vid",
-        description: "download and sent video to chat",
+        description: "download and sent video to chat. Supports yt shorts, reels, tiktok, and twitter videos",
         options: [
             {
                 name: 'url',
