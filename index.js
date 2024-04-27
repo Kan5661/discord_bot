@@ -54,7 +54,7 @@ client.on('interactionCreate', async (interaction) => {
         const url = interaction.options.get('url').value;
 
         // yt shorts
-        if (url.includes("https://www.youtube.com/shorts")) {
+        if (url.includes("youtube.com/shorts")) {
             try {
                 const video = await yt_download(url);
                 const vid_file = './output/yt_short.mp4'
@@ -78,7 +78,7 @@ client.on('interactionCreate', async (interaction) => {
         }
 
         // insta reels / fb post
-        if (url.includes("https://www.instagram.com/reel/") || url.includes("www.facebook.com")) {
+        if (url.includes("instagram.com/reel/") || url.includes("www.facebook.com")) {
             const download_url = await get_insta_download_url(url)
             const vid_file = './output/insta_reel.mp4'
 
