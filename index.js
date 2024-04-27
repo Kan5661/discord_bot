@@ -1,7 +1,9 @@
-const { Client, IntentsBitField } = require("discord.js");
-const { rand_choice } = require("./utils");
+const { Client, IntentsBitField, MessageAttachment } = require("discord.js");
+const { rand_choice, yt_download, get_vid, delete_yt } = require("./utils");
+
 // const cron = require("node-cron");
 const dotenv = require("dotenv");
+const fs = require('fs')
 
 dotenv.config();
 const client = new Client({
@@ -13,14 +15,6 @@ const client = new Client({
     ],
 });
 
-// CL week = true, Quest week = false
-let sendPings = false;
-const users_to_ping = [
-    process.env.KAN,
-    process.env.RADIATED_BALLS,
-    process.env.LOSER_EPIC,
-];
-const pingUsers = users_to_ping.map((id) => `<@${id}>`).join(" ");
 const bot_replies = [
     "<:nerd:1157435339737157704>",
 ];
@@ -52,5 +46,40 @@ client.on("messageCreate", async (message) => {
 
 
 });
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName == "vid") {
+        const url = interaction.options.get('url').value;
+        if (url.includes("https://www.youtube.com/shorts")) {
+            try {
+                const video = await yt_download(url);
+                console.log(video);
+                if (video) {
+                    const file = await get_vid("./output/yt_short.mp4");
+                    interaction.reply("downloading video....")
+                    await interaction.channel.send({ files: [{
+                        attachment: file,
+                        contentType: "video/mp4",
+                        name: "fked_mc_download.mp4",
+                    }] });
+                    interaction.channel.send(`nice vid <@${interaction.user.id}>`)
+                    interaction.deleteReply()
+                    delete_yt()
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        } else {
+            console.log("url not valid");
+            await interaction.reply("bad link");
+        }
+    }
+});
+
+
+
+
 
 client.login(process.env.BOT_TOKEN);

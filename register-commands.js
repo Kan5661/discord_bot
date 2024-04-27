@@ -1,15 +1,23 @@
-const { REST, Routes } = require('discord.js');
+const { REST, Routes, ApplicationCommandOptionType } = require('discord.js');
 require('dotenv').config();
 
 const commands = [
     {
-        name: 'hey',
-        description: 'Says hey to you',
-    },
+        name: "vid",
+        description: "download and sent video to chat",
+        options: [
+            {
+                name: 'url',
+                description: "download link",
+                type: ApplicationCommandOptionType.String,
+                required: true
+            }
+        ]
+    }
 ]
 
 const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
- 
+
 (async () => {
     try {
         console.log('registering slash commands')
