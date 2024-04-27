@@ -67,7 +67,6 @@ client.on('interactionCreate', async (interaction) => {
                         contentType: "video/mp4",
                         name: "fked_mc_download.mp4",
                     }] });
-                    interaction.channel.send(`nice vid <@${interaction.user.id}>`)
                     interaction.deleteReply()
                     delete_file(vid_file)
                     interaction.channel.send(`nice short bozo <@${interaction.user.id}>`)
@@ -75,6 +74,7 @@ client.on('interactionCreate', async (interaction) => {
             } catch (error) {
                 console.error("Error:", error);
             }
+            return
         }
 
         // insta reels / fb post
