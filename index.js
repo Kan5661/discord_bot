@@ -70,6 +70,7 @@ client.on('interactionCreate', async (interaction) => {
                     interaction.channel.send(`nice vid <@${interaction.user.id}>`)
                     interaction.deleteReply()
                     delete_file(vid_file)
+                    interaction.channel.send(`nice short bozo <@${interaction.user.id}>`)
                 }
             } catch (error) {
                 console.error("Error:", error);
