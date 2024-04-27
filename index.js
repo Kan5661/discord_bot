@@ -108,7 +108,7 @@ client.on('interactionCreate', async (interaction) => {
 
 
         // insta reels / fb post
-        if (url.includes("instagram.com/reels/") || url.includes("www.facebook.com")) {
+        if (url.includes("instagram.com/reel") || url.includes("www.facebook.com")) {
             const download_url = await get_insta_download_url(url)
             const vid_file = './output/insta_reel.mp4'
 
