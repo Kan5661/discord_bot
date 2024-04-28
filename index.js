@@ -63,14 +63,14 @@ client.on('interactionCreate', async (interaction) => {
                 console.log(video);
                 if (video) {
                     const file = await get_vid(vid_file);
-                    await interaction.channel.send({ files: [{
-                        attachment: file,
-                        contentType: "video/mp4",
-                        name: "fked_mc_download.mp4",
+                    await interaction.editReply({
+                        content: `here's ur vid bud <@${interaction.user.id}>`,
+                            files: [{
+                            attachment: file,
+                            contentType: "video/mp4",
+                            name: "fked_mc_download.mp4",
                     }] });
-                    interaction.deleteReply()
                     delete_file(vid_file)
-                    interaction.channel.send(`nice short bozo <@${interaction.user.id}>`)
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -110,22 +110,22 @@ client.on('interactionCreate', async (interaction) => {
 
         // insta reels / fb post
         if (url.includes("instagram.com/reel") || url.includes("www.facebook.com")) {
+            interaction.reply("downloading video....")
             const download_url = await get_insta_download_url(url)
             const vid_file = './output/insta_reel.mp4'
-            interaction.reply("downloading video....")
 
             try {
                 const video = await download_file_from_url(download_url, vid_file)
                 console.log("download url: " + video)
                 if (video) {
                     const file = await get_vid(vid_file);
-                    await interaction.channel.send({ files: [{
-                        attachment: file,
-                        contentType: "video/mp4",
-                        name: "fked_mc_download.mp4",
+                    await interaction.editReply({
+                        content: `here's ur vid bud <@${interaction.user.id}>`,
+                        files: [{
+                            attachment: file,
+                            contentType: "video/mp4",
+                            name: "fked_mc_download.mp4",
                     }] });
-                    interaction.channel.send(`nice vid <@${interaction.user.id}>`)
-                    interaction.deleteReply()
                     delete_file(vid_file)
                 }
 
@@ -137,55 +137,55 @@ client.on('interactionCreate', async (interaction) => {
         }
         // tiktok
         if (url.includes("tiktok.com")) {
-            const download_url = await get_tiktok_download_url(url)
-            const vid_file = './output/tiktok.mp4'
             interaction.reply("downloading video....")
+            const download_url = await get_tiktok_download_url(url)
+            const vid_file = './output/tik_tok.mp4'
 
             try {
                 const video = await download_file_from_url(download_url, vid_file)
+                console.log("download url: " + video)
                 if (video) {
                     const file = await get_vid(vid_file);
-                    await interaction.channel.send({ files: [{
-                        attachment: file,
-                        contentType: "video/mp4",
-                        name: "fked_mc_download.mp4",
+                    await interaction.editReply({
+                        content: `here's ur vid bud <@${interaction.user.id}>`,
+                        files: [{
+                            attachment: file,
+                            contentType: "video/mp4",
+                            name: "fked_mc_download.mp4",
                     }] });
-                    interaction.channel.send(`nice vid <@${interaction.user.id}>`)
-                    interaction.deleteReply()
                     delete_file(vid_file)
                 }
 
             } catch (error) {
                 console.error("error: ", error)
             }
-
 
             return
         }
 
         if (url.includes("twitter.com")) {
-            const download_url = await get_twitter_download_url(url)
-            const vid_file = './output/twitter.mp4'
             interaction.reply("downloading video....")
+            const download_url = await get_twitter_download_url(url)
+            const vid_file = './output/tweet.mp4'
 
             try {
                 const video = await download_file_from_url(download_url, vid_file)
+                console.log("download url: " + video)
                 if (video) {
                     const file = await get_vid(vid_file);
-                    await interaction.channel.send({ files: [{
-                        attachment: file,
-                        contentType: "video/mp4",
-                        name: "fked_mc_download.mp4",
+                    await interaction.editReply({
+                        content: `here's ur vid bud <@${interaction.user.id}>`,
+                        files: [{
+                            attachment: file,
+                            contentType: "video/mp4",
+                            name: "fked_mc_download.mp4",
                     }] });
-                    interaction.channel.send(`nice vid <@${interaction.user.id}>`)
-                    interaction.deleteReply()
                     delete_file(vid_file)
                 }
 
             } catch (error) {
                 console.error("error: ", error)
             }
-
 
             return
         }
