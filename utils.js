@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { format } = require('path');
+const fetch = require('node-fetch')
 const ytdl = require('ytdl-core');
 const { promisify } = require('util');
 const stream = require('stream');
