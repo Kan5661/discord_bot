@@ -55,7 +55,7 @@ client.on('interactionCreate', async (interaction) => {
         const url = interaction.options.get('url').value;
 
         // yt shorts
-        if (url.includes("youtube.com")) {
+        if (url.includes("youtube.com") || url.includes("youtu.be")) {
             interaction.reply("downloading video....")
             try {
                 const video = await yt_download(url);
