@@ -74,6 +74,7 @@ client.on('interactionCreate', async (interaction) => {
                 }
             } catch (error) {
                 console.error("Error:", error);
+                interaction.editReply("bad link")
             }
             return
         }
@@ -131,6 +132,7 @@ client.on('interactionCreate', async (interaction) => {
 
             } catch (error) {
                 console.error("error: ", error)
+                interaction.editReply("bad link")
             }
 
             return
@@ -158,6 +160,7 @@ client.on('interactionCreate', async (interaction) => {
 
             } catch (error) {
                 console.error("error: ", error)
+                interaction.editReply("bad link")
             }
 
             return
@@ -185,6 +188,7 @@ client.on('interactionCreate', async (interaction) => {
 
             } catch (error) {
                 console.error("error: ", error)
+                interaction.editReply("bad link")
             }
 
             return
