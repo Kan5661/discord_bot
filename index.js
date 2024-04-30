@@ -73,8 +73,11 @@ client.on('interactionCreate', async (interaction) => {
                     delete_file(vid_file)
                 }
             } catch (error) {
-                console.error("Error:", error);
-                interaction.editReply("bad link")
+                console.error("error: ", error)
+                if (error.rawError.message == "Request entity too large") {
+                    interaction.editReply("video exceed file size limit")
+                }
+                else interaction.editReply("an issue occured while downloading video")
             }
             return
         }
@@ -132,7 +135,10 @@ client.on('interactionCreate', async (interaction) => {
 
             } catch (error) {
                 console.error("error: ", error)
-                interaction.editReply("bad link")
+                if (error.rawError.message == "Request entity too large") {
+                    interaction.editReply("video exceed file size limit")
+                }
+                else interaction.editReply("an issue occured while downloading video")
             }
 
             return
@@ -160,7 +166,10 @@ client.on('interactionCreate', async (interaction) => {
 
             } catch (error) {
                 console.error("error: ", error)
-                interaction.editReply("bad link")
+                if (error.rawError.message == "Request entity too large") {
+                    interaction.editReply("video exceed file size limit")
+                }
+                else interaction.editReply("an issue occured while downloading video")
             }
 
             return
@@ -188,7 +197,10 @@ client.on('interactionCreate', async (interaction) => {
 
             } catch (error) {
                 console.error("error: ", error)
-                interaction.editReply("bad link")
+                if (error.rawError.message == "Request entity too large") {
+                    interaction.editReply("video exceed file size limit")
+                }
+                else interaction.editReply("an issue occured while downloading video")
             }
 
             return
