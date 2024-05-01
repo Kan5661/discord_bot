@@ -175,7 +175,7 @@ client.on('interactionCreate', async (interaction) => {
             return
         }
 
-        if (url.includes("twitter.com")) {
+        if (url.includes("twitter.com") || url.includes("x.com")) {
             interaction.reply("downloading video....")
             const download_url = await get_twitter_download_url(url)
             const vid_file = './output/tweet.mp4'
