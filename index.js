@@ -52,7 +52,7 @@ client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     if (interaction.commandName == "vid") {
-        const url = interaction.options.get('url').value;
+        let url = interaction.options.get('url').value;
 
         // yt shorts
         if (url.includes("youtube.com") || url.includes("youtu.be")) {
@@ -176,6 +176,10 @@ client.on('interactionCreate', async (interaction) => {
         }
 
         if (url.includes("twitter.com") || url.includes("x.com")) {
+            if (url.includes("x.com")) {
+                url = url.replace("x.com", "twitter.com")
+            }
+            console.log(url)
             interaction.reply("downloading video....")
             const download_url = await get_twitter_download_url(url)
             const vid_file = './output/tweet.mp4'
