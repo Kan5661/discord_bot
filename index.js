@@ -43,9 +43,6 @@ client.on("messageCreate", async (message) => {
         message.reply(coin);
     }
 
-    // detect video link, download it, and sent to chat
-
-
 });
 
 client.on('interactionCreate', async (interaction) => {
@@ -115,10 +112,10 @@ client.on('interactionCreate', async (interaction) => {
         // insta reels / fb post
         if (url.includes("instagram.com/reel") || url.includes("www.facebook.com")) {
             interaction.reply("downloading video....")
-            const download_url = await get_insta_download_url(url)
-            const vid_file = './output/insta_reel.mp4'
 
             try {
+                const download_url = await get_insta_download_url(url)
+                const vid_file = './output/insta_reel.mp4'
                 const video = await download_file_from_url(download_url, vid_file)
                 console.log("download url: " + video)
                 if (video) {
@@ -146,10 +143,10 @@ client.on('interactionCreate', async (interaction) => {
         // tiktok
         if (url.includes("tiktok.com")) {
             interaction.reply("downloading video....")
-            const download_url = await get_tiktok_download_url(url)
-            const vid_file = './output/tik_tok.mp4'
 
             try {
+                const download_url = await get_tiktok_download_url(url)
+                const vid_file = './output/tik_tok.mp4'
                 const video = await download_file_from_url(download_url, vid_file)
                 console.log("download url: " + video)
                 if (video) {
@@ -181,10 +178,10 @@ client.on('interactionCreate', async (interaction) => {
             }
             console.log(url)
             interaction.reply("downloading video....")
-            const download_url = await get_twitter_download_url(url)
-            const vid_file = './output/tweet.mp4'
 
             try {
+                const download_url = await get_twitter_download_url(url)
+                const vid_file = './output/tweet.mp4'
                 const video = await download_file_from_url(download_url, vid_file)
                 console.log("download url: " + video)
                 if (video) {
