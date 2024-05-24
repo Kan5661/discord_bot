@@ -30,25 +30,47 @@ const yt_download = (url) => {
 };
 
 const get_yt_download_url = async (url) => {
-    const info = await ytdown(url)
-    console.log(info)
+    try {
+        const info = await ytdown(url)
+        return info.data[0].url
+    }
+    catch (error) {
+        console.error("Error getting youtube download url:", error)
+        return error
+    }
 }
 
 const get_insta_download_url = async (url) => {
-    const info = await ndown(url)
-    return info.data[0].url
+    try {
+        const info = await ndown(url)
+        return info.data[0].url
+    }
+    catch (error) {
+        console.error("Error getting instagram download url:", error)
+        return error
+    }
 }
 
 const get_tiktok_download_url = async (url) => {
-    const info = await tikdown(url)
-    console.log(info)
-    return info.data.video
+    try {
+        const info = await tikdown(url)
+        return info.data.video
+    }
+    catch (error) {
+        console.error("Error getting tiktok download url:", error)
+        return error
+    }
 }
 
 const get_twitter_download_url = async (url) => {
-    const info = await twitterdown(url)
-    console.log(info)
-    return info.data.HD
+    try {
+        const info = await twitterdown(url)
+        return info.data.HD
+    }
+    catch (error) {
+        console.error("Error getting twitter download url:", error)
+        return error
+    }
 }
 
 const get_vid = (filePath) => {
