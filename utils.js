@@ -35,7 +35,6 @@ const get_yt_download_url = async (url) => {
         return info.data[0].url
     }
     catch (error) {
-        console.error("Error getting youtube download url:", error)
         return null
     }
 }
@@ -46,7 +45,6 @@ const get_insta_download_url = async (url) => {
         return info.data[0].url
     }
     catch (error) {
-        console.error("Error getting instagram download url:", error)
         return null
     }
 }
@@ -57,7 +55,6 @@ const get_tiktok_download_url = async (url) => {
         return info.data.video
     }
     catch (error) {
-        console.error("Error getting tiktok download url:", error)
         return null
     }
 }
@@ -68,7 +65,6 @@ const get_twitter_download_url = async (url) => {
         return info.data.HD
     }
     catch (error) {
-        console.error("Error getting twitter download url:", error)
         return null
     }
 }
@@ -78,7 +74,6 @@ const get_vid = (filePath) => {
         const file = fs.readFileSync(filePath);
         return file;
     } catch (error) {
-        console.error("Error reading file:", error);
         return null;
     }
 }
