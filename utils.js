@@ -46,8 +46,6 @@ const get_insta_download_url = async (url) => {
     }
     catch (error) {
         console.error("Error getting instagram download url:", error)
-    }
-    finally {
         return null
     }
 }
