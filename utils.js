@@ -36,20 +36,21 @@ const get_yt_download_url = async (url) => {
     }
     catch (error) {
         console.error("Error getting youtube download url:", error)
-        return error
     }
 }
 
-
 const get_insta_download_url = async (url) => {
-  try {
-    const info = await ndown(url);
-    return info.data[0].url;
-  } catch (error) {
-    console.error("Error getting Instagram download URL:", error);
-    return Promise.reject(error);
-  }
-};
+    try {
+        const info = await ndown(url)
+        return info.data[0].url
+    }
+    catch (error) {
+        console.error("Error getting instagram download url:", error)
+    }
+    finally {
+        return null
+    }
+}
 
 const get_tiktok_download_url = async (url) => {
     try {
@@ -58,7 +59,6 @@ const get_tiktok_download_url = async (url) => {
     }
     catch (error) {
         console.error("Error getting tiktok download url:", error)
-        return error
     }
 }
 
@@ -69,7 +69,6 @@ const get_twitter_download_url = async (url) => {
     }
     catch (error) {
         console.error("Error getting twitter download url:", error)
-        return error
     }
 }
 
@@ -100,16 +99,16 @@ const download_file_from_url = async (url, filePath) => {
     const response = await fetch(url);
 
     if (!response.ok) {
-      return Promise.reject(new Error(`HTTP error: ${response.status} ${response.statusText}`));
+      throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
     }
 
     const fileStream = fs.createWriteStream(filePath);
     await pipeline(response.body, fileStream);
 
     console.log('Download completed');
-    return true;
+    return true
   } catch (error) {
-    return Promise.reject(new Error(`Error downloading: ${error.message}`));
+    throw new Error(`Error downloading: ${error.message}`);
   }
 };
 
