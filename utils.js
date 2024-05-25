@@ -30,43 +30,25 @@ const yt_download = (url) => {
 };
 
 const get_yt_download_url = async (url) => {
-    try {
-        const info = await ytdown(url)
-        return info.data[0].url
-    }
-    catch (error) {
-        return null
-    }
+    const info = await ytdown(url)
+    console.log(info)
 }
 
 const get_insta_download_url = async (url) => {
-    try {
-        const info = await ndown(url)
-        return info.data[0].url
-    }
-    catch (error) {
-        return null
-    }
+    const info = await ndown(url)
+    return info.data[0].url
 }
 
 const get_tiktok_download_url = async (url) => {
-    try {
-        const info = await tikdown(url)
-        return info.data.video
-    }
-    catch (error) {
-        return null
-    }
+    const info = await tikdown(url)
+    console.log(info)
+    return info.data.video
 }
 
 const get_twitter_download_url = async (url) => {
-    try {
-        const info = await twitterdown(url)
-        return info.data.HD
-    }
-    catch (error) {
-        return null
-    }
+    const info = await twitterdown(url)
+    console.log(info)
+    return info.data.HD
 }
 
 const get_vid = (filePath) => {
@@ -74,6 +56,7 @@ const get_vid = (filePath) => {
         const file = fs.readFileSync(filePath);
         return file;
     } catch (error) {
+        console.error("Error reading file:", error);
         return null;
     }
 }
