@@ -115,6 +115,10 @@ client.on('interactionCreate', async (interaction) => {
 
             try {
                 const download_url = await get_insta_download_url(url)
+                if (!download_url) {
+                    interaction.editReply("an issue occured while downloading video")
+                    return
+                }
                 const vid_file = './output/insta_reel.mp4'
                 const video = await download_file_from_url(download_url, vid_file)
                 console.log("download url: " + video)
