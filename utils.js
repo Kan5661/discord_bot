@@ -37,6 +37,9 @@ const get_yt_download_url = async (url) => {
     catch (error) {
         console.error("Error getting youtube download url:", error)
     }
+    finally {
+        return null
+    }
 }
 
 const get_insta_download_url = async (url) => {
@@ -46,6 +49,8 @@ const get_insta_download_url = async (url) => {
     }
     catch (error) {
         console.error("Error getting instagram download url:", error)
+    }
+    finally {
         return null
     }
 }
@@ -58,6 +63,9 @@ const get_tiktok_download_url = async (url) => {
     catch (error) {
         console.error("Error getting tiktok download url:", error)
     }
+    finally {
+        return null
+    }
 }
 
 const get_twitter_download_url = async (url) => {
@@ -67,6 +75,9 @@ const get_twitter_download_url = async (url) => {
     }
     catch (error) {
         console.error("Error getting twitter download url:", error)
+    }
+    finally {
+        return null
     }
 }
 
