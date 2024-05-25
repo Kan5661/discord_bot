@@ -116,7 +116,7 @@ client.on('interactionCreate', async (interaction) => {
             try {
                 const download_url = await get_insta_download_url(url)
                 if (!download_url) {
-                    interaction.editReply("an issue occured while downloading video")
+                    interaction.editReply("unable to access url")
                     return
                 }
                 const vid_file = './output/insta_reel.mp4'
@@ -151,7 +151,7 @@ client.on('interactionCreate', async (interaction) => {
             try {
                 const download_url = await get_tiktok_download_url(url)
                 if (!download_url) {
-                    interaction.editReply("an issue occured while downloading video")
+                    interaction.editReply("unable to access url")
                     return
                 }
                 const vid_file = './output/tik_tok.mp4'
@@ -190,7 +190,7 @@ client.on('interactionCreate', async (interaction) => {
             try {
                 const download_url = await get_twitter_download_url(url)
                 if (!download_url) {
-                    interaction.editReply("an issue occured while downloading video")
+                    interaction.editReply("unable to access url")
                     return
                 }
                 const vid_file = './output/tweet.mp4'
