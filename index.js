@@ -112,6 +112,7 @@ client.on('interactionCreate', async (interaction) => {
         // insta reels / fb post
         if (url.includes("instagram.com/reel") || url.includes("www.facebook.com")) {
             interaction.reply("downloading video....")
+            let video
 
             try {
                 const download_url = await get_insta_download_url(url)
@@ -120,24 +121,25 @@ client.on('interactionCreate', async (interaction) => {
                     return
                 }
                 const vid_file = './output/insta_reel.mp4'
+
                 try {
-                    const video = await download_file_from_url(download_url, vid_file)
+                    video = await download_file_from_url(download_url, vid_file)
+                    if (video) {
+                        const file = await get_vid(vid_file);
+                        await interaction.editReply({
+                            content: `here's ur vid bud <@${interaction.user.id}>`,
+                            files: [{
+                                attachment: file,
+                                contentType: "video/mp4",
+                                name: "fked_mc_download.mp4",
+                        }] });
+                        delete_file(vid_file)
+                    }
                 }
                 catch (error) {
                     console.error("error: ", error)
                     interaction.editReply("an issue occured while downloading video")
-                }
-                console.log("download url: " + video)
-                if (video) {
-                    const file = await get_vid(vid_file);
-                    await interaction.editReply({
-                        content: `here's ur vid bud <@${interaction.user.id}>`,
-                        files: [{
-                            attachment: file,
-                            contentType: "video/mp4",
-                            name: "fked_mc_download.mp4",
-                    }] });
-                    delete_file(vid_file)
+                    return
                 }
 
             } catch (error) {
@@ -145,7 +147,7 @@ client.on('interactionCreate', async (interaction) => {
                 if (error.rawError.message == "Request entity too large") {
                     interaction.editReply("video exceed file size limit")
                 }
-                else interaction.editReply("an issue occured while downloading video")
+                else interaction.editReply("error : (")
             }
 
             return
