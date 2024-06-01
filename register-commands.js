@@ -13,6 +13,10 @@ const commands = [
                 required: true
             }
         ]
+    },
+    {
+        name: "coin_flip",
+        description: "flips a coin"
     }
 ]
 

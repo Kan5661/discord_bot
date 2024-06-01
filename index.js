@@ -38,15 +38,17 @@ client.on("messageCreate", async (message) => {
         }
     }
 
-    if (message.content.toLowerCase() == "!flipcoin") {
-        const coin = Math.random() < 0.5 ? "heads" : "tails";
-        message.reply(coin);
-    }
-
 });
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName == "coin_flip") {
+        if (Math.random() < 0.5) {
+            interaction.reply("head")
+        }
+        else interaction.reply("tail")
+    }
 
     if (interaction.commandName == "vid") {
         let url = interaction.options.get('url').value;
