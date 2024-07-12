@@ -32,7 +32,8 @@ const yt_download = (url) => {
 const get_yt_download_url = async (url) => {
     try {
         const info = await ytdown(url)
-        return info.data[0].url
+        console.log(info)
+        return info.data.video
     }
     catch (error) {
         console.error(error)
