@@ -17,6 +17,10 @@ const commands = [
     {
         name: "coin_flip",
         description: "flips a coin"
+    },
+    {
+        name: "qotd",
+        description: "Quote of the day"
     }
 ]
 

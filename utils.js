@@ -6,11 +6,18 @@ const { promisify } = require('util');
 const stream = require('stream');
 const { tikdown, ndown, ytdown, twitterdown } = require("nayan-media-downloader")
 const pipeline = promisify(stream.pipeline);
+const quotes = require('./quotes.json')
 
 const rand_choice = (choices) => {
     var index = Math.floor(Math.random() * choices.length);
     return choices[index];
   }
+
+const get_quote = () => {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const quote = quotes[randomIndex]
+    return quote
+}
 
 const yt_download = (url) => {
     return new Promise((resolve, reject) => {
@@ -118,4 +125,4 @@ const download_file_from_url = async (url, filePath) => {
 
 
 module.exports = { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url };
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote };

@@ -1,10 +1,11 @@
 const { Client, IntentsBitField } = require("discord.js");
 const { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url } = require("./utils");
-
-// const cron = require("node-cron");
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote } = require("./utils");
+const cron = require("node-cron");
 const dotenv = require("dotenv");
 const fs = require('fs')
+const quotes = require("./quotes.json")
+
 
 dotenv.config();
 const client = new Client({
@@ -16,9 +17,13 @@ const client = new Client({
     ],
 });
 
+
 const bot_replies = [
     "<:nerd:1157435339737157704>",
 ];
+
+let quote = get_quote()
+
 
 client.on("ready", (c) => {
     console.log(`BOT ${c.user.tag} is online`);
@@ -48,6 +53,10 @@ client.on('interactionCreate', async (interaction) => {
             interaction.reply("head")
         }
         else interaction.reply("tail")
+    }
+
+    if (interaction.commandName == "qotd") {
+        interaction.reply(quote.quoteText + " - " + quote.quoteAuthor)
     }
 
     if (interaction.commandName == "vid") {
@@ -258,7 +267,10 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 
-
+cron.schedule('0 0 * * *', () => {
+    quote = get_quote()
+    console.log("Quote of the day: " + quote.quoteText)
+});
 
 
 client.login(process.env.BOT_TOKEN);
