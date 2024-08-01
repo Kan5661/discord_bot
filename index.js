@@ -56,7 +56,7 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "qotd") {
-        interaction.reply(quote.quoteText + " - " + quote.quoteAuthor)
+        interaction.reply(`"${quote.quoteText}"\n--- ${quote.quoteAuthor}`)
     }
 
     if (interaction.commandName == "vid") {
