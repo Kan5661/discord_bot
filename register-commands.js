@@ -20,7 +20,7 @@ const commands = [
     },
     {
         name: "qotd",
-        description: "Quote of the day"
+        description: "What's the quote of the day?"
     }
 ]
 
