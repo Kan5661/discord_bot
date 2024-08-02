@@ -59,6 +59,11 @@ client.on('interactionCreate', async (interaction) => {
         interaction.reply(`"${quote.quoteText}"\n--- ${quote.quoteAuthor}`)
     }
 
+    if (interaction.commandName == "random_quote") {
+        let random_quote = get_quote()
+        interaction.reply(`"${random_quote.quoteText}"\n --- ${random_quote.quoteAuthor}`)
+    }
+
     if (interaction.commandName == "vid") {
         let url = interaction.options.get('url').value;
 
