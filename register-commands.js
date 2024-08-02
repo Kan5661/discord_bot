@@ -21,6 +21,10 @@ const commands = [
     {
         name: "qotd",
         description: "What's the quote of the day?"
+    },
+    {
+        name: "random_quote",
+        description: "CONSTANT wisdom just for you"
     }
 ]
 
