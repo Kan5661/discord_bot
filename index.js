@@ -271,26 +271,34 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "dl") {
-        const download_url = interaction.options.get('url').value
-        interaction.reply("downloading video.....")
-        const res = await universal_download(url=download_url)
-        const video_file_exist = await check_dir_for_file('./output')
+        try {
+            const download_url = interaction.options.get('url').value;
+            await interaction.reply("downloading video.....");
+            const res = await universal_download(url=download_url);
+            const video_file_exist = await check_dir_for_file('./output');
 
-        if (res && video_file_exist) {
-            const file_path = './output/output.mp4'
-            const file = get_vid(file_path)
-            await interaction.editReply({
-                content: `here's ur vid bud <@${interaction.user.id}>`,
-                files: [{
-                    attachment: file,
-                    contentType: "video/mp4",
-                    name: "fked_mc_download.mp4",
-            }] });
-            delete_file(file_path)
-        } else {
-            interaction.editReply("an issue occured while downloading video")
+            if (res && video_file_exist) {
+                const file_path = './output/output.mp4';
+                const file = await fs.promises.readFile(file_path);
+                if (!file) {
+                    throw new Error("Failed to read video file");
+                }
+                await interaction.editReply({
+                    content: `here's ur vid bud <@${interaction.user.id}>`,
+                    files: [{
+                        attachment: file,
+                        contentType: "video/mp4",
+                        name: "fked_mc_download.mp4",
+                    }]
+                });
+                await delete_file(file_path);
+            } else {
+                await interaction.editReply("An issue occurred while downloading video");
+            }
+        } catch (error) {
+            console.error("Error in dl command:", error);
+            await interaction.editReply("An error occurred while processing your request.");
         }
-
     }
 
 });
