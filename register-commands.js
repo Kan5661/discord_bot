@@ -4,11 +4,23 @@ require('dotenv').config();
 const commands = [
     {
         name: "vid",
-        description: "download and sent video to chat. Supports yt shorts, reels, tiktok, and twitter videos",
+        description: "download and sent video to chat. works for reels, tiktok, and twitter videos. YT IS BROKEN",
         options: [
             {
                 name: 'url',
                 description: "download link",
+                type: ApplicationCommandOptionType.String,
+                required: true
+            }
+        ]
+    },
+    {
+        name: "dl",
+        description: "download and sent video to chat. Works for almost any website you can think of",
+        options: [
+            {
+                name: 'url',
+                description: "link",
                 type: ApplicationCommandOptionType.String,
                 required: true
             }

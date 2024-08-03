@@ -1,6 +1,6 @@
 const { Client, IntentsBitField } = require("discord.js");
-const { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote } = require("./utils");
+const { rand_choice, yt_download, universal_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file } = require("./utils");
 const cron = require("node-cron");
 const dotenv = require("dotenv");
 const fs = require('fs')
@@ -269,6 +269,30 @@ client.on('interactionCreate', async (interaction) => {
             await interaction.reply("bad link");
         }
     }
+
+    if (interaction.commandName == "dl") {
+        const download_url = interaction.options.get('url').value
+        interaction.reply("downloading video.....")
+        const res = await universal_download(url=download_url)
+        const video_file_exist = await check_dir_for_file('./output')
+
+        if (res && video_file_exist) {
+            const file_path = './output/output.mp4'
+            const file = get_vid(file_path)
+            await interaction.editReply({
+                content: `here's ur vid bud <@${interaction.user.id}>`,
+                files: [{
+                    attachment: file,
+                    contentType: "video/mp4",
+                    name: "fked_mc_download.mp4",
+            }] });
+            delete_file(file_path)
+        } else {
+            interaction.editReply("an issue occured while downloading video")
+        }
+
+    }
+
 });
 
 

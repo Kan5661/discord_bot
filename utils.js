@@ -7,6 +7,7 @@ const stream = require('stream');
 const { tikdown, ndown, ytdown, twitterdown } = require("nayan-media-downloader")
 const pipeline = promisify(stream.pipeline);
 const quotes = require('./quotes.json')
+const youtubedl = require('youtube-dl-exec')
 
 const rand_choice = (choices) => {
     var index = Math.floor(Math.random() * choices.length);
@@ -17,6 +18,16 @@ const get_quote = () => {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex]
     return quote
+}
+
+const universal_download = async (url) => {
+    const output = await youtubedl(url, {
+        mergeOutputFormat: 'mp4',
+        maxFilesize: "50M", // Cancle download if video over 50Mb
+        format: "b[filesize<50M] / w", // downloads best video with audio available under 50Mb
+        output: "./output/output.%(ext)s" // File path and set file name
+    })
+    return output
 }
 
 const yt_download = (url) => {
@@ -105,6 +116,22 @@ const delete_file = (delete_file_path) => {
 }
 
 
+const check_dir_for_file = (path) => {
+    return new Promise((resolve, reject) => {
+        fs.readdir(path, (err, files) => {
+            if (err) {
+                console.error('Error reading directory:', err);
+                reject(false);
+            } else if (files.length === 0) {
+                resolve(false);
+            } else {
+                resolve(true);
+            }
+        });
+    });
+};
+
+
 const download_file_from_url = async (url, filePath) => {
   try {
     const response = await fetch(url);
@@ -124,5 +151,5 @@ const download_file_from_url = async (url, filePath) => {
 };
 
 
-module.exports = { rand_choice, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote };
+module.exports = { rand_choice, universal_download, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file };
