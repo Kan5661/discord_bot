@@ -297,6 +297,7 @@ client.on('interactionCreate', async (interaction) => {
                 if (video_file_exist) delete_all_file_from('./output')
             }
         } catch (error) {
+            const video_file_exist = await check_dir_for_file('./output');
             console.error("Error in dl command:", error);
             await interaction.editReply("An error occurred while processing your request.");
             if (video_file_exist) delete_all_file_from('./output')
