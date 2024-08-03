@@ -273,12 +273,13 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.commandName == "dl") {
         try {
             const download_url = interaction.options.get('url').value;
+            const file_path = './output/output.mp4';
             await interaction.reply("downloading video.....");
             const res = await universal_download(url=download_url);
-            const video_file_exist = await check_dir_for_file('./output');
+            console.log(res)
+            const video_file_exist = fs.existsSync(file_path)
 
             if (res && video_file_exist) {
-                const file_path = './output/output.mp4';
                 const file = await fs.promises.readFile(file_path);
                 if (!file) {
                     throw new Error("Failed to read video file");
@@ -291,17 +292,17 @@ client.on('interactionCreate', async (interaction) => {
                         name: "fked_mc_download.mp4",
                     }]
                 });
-                await delete_file(file_path);
             } else {
-                await interaction.editReply("An issue occurred while downloading video");
-                if (video_file_exist) delete_all_file_from('./output')
+                await interaction.editReply("An issue occurred while downloading video. Vid size too large?");
+
             }
         } catch (error) {
-            const video_file_exist = await check_dir_for_file('./output');
             console.error("Error in dl command:", error);
             await interaction.editReply("An error occurred while processing your request.");
-            if (video_file_exist) delete_all_file_from('./output')
+
         }
+        const file_in_output = await check_dir_for_file('./output');
+        if (file_in_output) delete_all_file_from('./output')
     }
 
 });

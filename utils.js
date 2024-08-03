@@ -22,6 +22,7 @@ const get_quote = () => {
 }
 
 const universal_download = async (url) => {
+    console.log(`Downloading from ${url}`)
     const output = await youtubedl(url, {
         mergeOutputFormat: 'mp4',
         maxFilesize: "50M", // Cancle download if video over 50Mb
@@ -126,6 +127,7 @@ const delete_all_file_from = (dir) => {
         });
         }
     });
+    console.log("file deleted")
 }
 
 
