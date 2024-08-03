@@ -294,10 +294,12 @@ client.on('interactionCreate', async (interaction) => {
                 await delete_file(file_path);
             } else {
                 await interaction.editReply("An issue occurred while downloading video");
+                if (video_file_exist) delete_all_file_from('./output')
             }
         } catch (error) {
             console.error("Error in dl command:", error);
             await interaction.editReply("An error occurred while processing your request.");
+            if (video_file_exist) delete_all_file_from('./output')
         }
     }
 

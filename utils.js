@@ -8,6 +8,7 @@ const { tikdown, ndown, ytdown, twitterdown } = require("nayan-media-downloader"
 const pipeline = promisify(stream.pipeline);
 const quotes = require('./quotes.json')
 const youtubedl = require('youtube-dl-exec')
+const path = require('path');
 
 const rand_choice = (choices) => {
     var index = Math.floor(Math.random() * choices.length);
@@ -115,6 +116,18 @@ const delete_file = (delete_file_path) => {
     })
 }
 
+const delete_all_file_from = (dir) => {
+    fs.readdir(dir, (err, files) => {
+        if (err) throw err;
+
+        for (const file of files) {
+        fs.unlink(path.join(dir, file), err => {
+            if (err) throw err;
+        });
+        }
+    });
+}
+
 
 const check_dir_for_file = (path) => {
     return new Promise((resolve, reject) => {
@@ -152,4 +165,4 @@ const download_file_from_url = async (url, filePath) => {
 
 
 module.exports = { rand_choice, universal_download, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file };
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from };
