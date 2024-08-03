@@ -280,6 +280,7 @@ client.on('interactionCreate', async (interaction) => {
             const video_file_exist = fs.existsSync(file_path)
 
             if (res && video_file_exist) {
+                console.log("sending file to discord")
                 const file = await fs.promises.readFile(file_path);
                 if (!file) {
                     throw new Error("Failed to read video file");
@@ -297,10 +298,8 @@ client.on('interactionCreate', async (interaction) => {
 
             }
         } catch (error) {
-            console.error("Error in dl command:", error.rawError);
-            if (error.rawError.message) {
-                interaction.editReply(error.rawError.message);
-            }
+            console.error("Error in dl command:", error);
+                interaction.editReply("exceed vid size limit");
 
         }
         const file_in_output = await check_dir_for_file('./output');

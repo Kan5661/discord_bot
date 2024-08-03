@@ -25,8 +25,8 @@ const universal_download = async (url) => {
     console.log(`Downloading from ${url}`)
     const output = await youtubedl(url, {
         mergeOutputFormat: 'mp4',
-        maxFilesize: "50M", // Cancle download if video over 50Mb
-        format: "b[filesize<50M] / w", // downloads best video with audio available under 50Mb
+        // maxFilesize: "50M", // Cancle download if video over 50Mb
+        format: "b[filesize<50M] / bestvideo[filesize<50M]", // downloads best video with audio available under 50Mb
         output: "./output/output.%(ext)s" // File path and set file name
     })
     return output
@@ -130,6 +130,16 @@ const delete_all_file_from = (dir) => {
     console.log("file deleted")
 }
 
+const getFileSize = (filePath) => {
+    try {
+        const stats = fs.statSync(filePath);
+        const fileSizeInBytes = stats.size;
+        return fileSizeInBytes;
+    } catch (err) {
+        console.error('Error getting file size:', err);
+        return null;
+    }
+}
 
 const check_dir_for_file = (path) => {
     return new Promise((resolve, reject) => {
@@ -167,4 +177,4 @@ const download_file_from_url = async (url, filePath) => {
 
 
 module.exports = { rand_choice, universal_download, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from };
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, getFileSize };
