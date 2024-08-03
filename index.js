@@ -293,12 +293,14 @@ client.on('interactionCreate', async (interaction) => {
                     }]
                 });
             } else {
-                await interaction.editReply("An issue occurred while downloading video. Vid size too large?");
+                interaction.editReply("An issue occurred while downloading video. Vid size too large?");
 
             }
         } catch (error) {
-            console.error("Error in dl command:", error);
-            await interaction.editReply("An error occurred while processing your request.");
+            console.error("Error in dl command:", error.rawError);
+            if (error.rawError.message) {
+                interaction.editReply(error.rawError.message);
+            }
 
         }
         const file_in_output = await check_dir_for_file('./output');
