@@ -5,6 +5,7 @@ const cron = require("node-cron");
 const dotenv = require("dotenv");
 const fs = require('fs')
 const quotes = require("./quotes.json")
+const download_data = require('./usage.json')
 
 
 dotenv.config();
@@ -29,6 +30,14 @@ client.on("ready", (c) => {
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
+
+    if (interaction.commandName == "download_stats") {
+        let message = "How many videos sent by users: \n"
+        for (let key in download_data) {
+            message += `${key}: ${download_data[key]} \n`
+        }
+        interaction.reply(message)
+    }
 
     if (interaction.commandName == "coin_flip") {
         if (Math.random() < 0.5) {
