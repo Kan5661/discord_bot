@@ -1,6 +1,6 @@
 const { Client, IntentsBitField } = require("discord.js");
 const { rand_choice, yt_download, universal_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from } = require("./utils");
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, count } = require("./utils");
 const cron = require("node-cron");
 const dotenv = require("dotenv");
 const fs = require('fs')
@@ -18,9 +18,6 @@ const client = new Client({
 });
 
 
-const bot_replies = [
-    "<:nerd:1157435339737157704>",
-];
 
 let quote = get_quote()
 
@@ -29,21 +26,6 @@ client.on("ready", (c) => {
     console.log(`BOT ${c.user.tag} is online`);
 });
 
-client.on("messageCreate", async (message) => {
-    if (message.author.bot) return
-
-    // absoultely random stuff
-    if (
-        Math.random() < 0.5 &&
-        message.author.id == process.env.RADIATED_BALLS
-    ) {
-        const words = message.content.toLowerCase().split(/\s+/);
-        if (words.includes("hw") || words.includes("homework")) {
-            message.reply(rand_choice(bot_replies));
-        }
-    }
-
-});
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
@@ -65,6 +47,7 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "vid") {
+        count(interaction.member.user.username)
         let url = interaction.options.get('url').value;
 
         // yt shorts
@@ -98,52 +81,6 @@ client.on('interactionCreate', async (interaction) => {
             }
             return
         }
-
-        // need to add error handling
-        // if (url.includes("youtube.com") || url.includes("youtu.be")) {
-        //     interaction.reply("downloading video....")
-        //     let video
-        //     try {
-        //         const download_url = await get_yt_download_url(url)
-
-        //         if (!download_url) {
-        //             interaction.editReply("unable to access url")
-        //             return
-        //         }
-
-        //         const vid_file = './output/yt.mp4'
-
-        //         try {
-        //             video = await download_file_from_url(download_url, vid_file)
-        //             if (video) {
-        //                 const file = await get_vid(vid_file);
-        //                 await interaction.editReply({
-        //                     content: `here's ur vid bud <@${interaction.user.id}>`,
-        //                     files: [{
-        //                         attachment: file,
-        //                         contentType: "video/mp4",
-        //                         name: "fked_mc_download.mp4",
-        //                 }] });
-        //                 delete_file(vid_file)
-        //             }
-        //         }
-        //         catch (error) {
-        //             console.error("error: ", error)
-        //             interaction.editReply("an issue occured while downloading video")
-        //             return
-        //         }
-        //     }
-        //     catch (error) {
-        //         console.error("error: ", error)
-        //         if (error.rawError.message == "Request entity too large") {
-        //             interaction.editReply("video exceed file size limit")
-        //         }
-        //         else interaction.editReply("error : (")
-        //     }
-
-        //     return
-        // }
-
 
 
         // insta reels / fb post
@@ -271,6 +208,8 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "dl") {
+        count(interaction.member.user.username)
+
         try {
             const download_url = interaction.options.get('url').value;
             const file_path = './output/output.mp4';

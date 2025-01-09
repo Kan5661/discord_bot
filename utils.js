@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { format } = require('path');
+const path = require('path');
 const fetch = require('node-fetch')
 const ytdl = require('ytdl-core');
 const { promisify } = require('util');
@@ -8,7 +8,7 @@ const { tikdown, ndown, ytdown, twitterdown } = require("nayan-media-downloader"
 const pipeline = promisify(stream.pipeline);
 const quotes = require('./quotes.json')
 const youtubedl = require('youtube-dl-exec')
-const path = require('path');
+const usage_data = require('./usage.json')
 
 const rand_choice = (choices) => {
     var index = Math.floor(Math.random() * choices.length);
@@ -19,6 +19,15 @@ const get_quote = () => {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const quote = quotes[randomIndex]
     return quote
+}
+
+const count = (user_name) => {
+    if (usage_data[user_name] == undefined) {
+        usage_data[user_name] = 1
+    }
+    else usage_data[user_name] += 1
+
+    fs.writeFileSync('./usage.json', JSON.stringify(usage_data, null, 4), 'utf-8');
 }
 
 const universal_download = async (url) => {
@@ -177,4 +186,4 @@ const download_file_from_url = async (url, filePath) => {
 
 
 module.exports = { rand_choice, universal_download, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, getFileSize };
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, getFileSize, count };
