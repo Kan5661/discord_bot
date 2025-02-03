@@ -63,7 +63,7 @@ client.on('interactionCreate', async (interaction) => {
         if (url.includes("youtube.com") || url.includes("youtu.be")) {
 	    console.log("downloading: " + url)
             try {
-                interaction.reply("use /dl command for youtube u rat monkey boy, always crashing my shit i swear....")
+                interaction.reply("use /dl command for youtube u rat monkey boy, always crashing my shit <a:pug_dance:990680940172951612>")
             } catch (error) {
                 console.error("error: ", error)
                 if (error.rawError.message == "Request entity too large") {
