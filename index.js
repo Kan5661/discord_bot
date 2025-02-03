@@ -62,25 +62,8 @@ client.on('interactionCreate', async (interaction) => {
         // yt shorts
         if (url.includes("youtube.com") || url.includes("youtu.be")) {
 	    console.log("downloading: " + url)
-            interaction.reply("downloading video....")
             try {
-                const video = await yt_download(url);
-                const vid_file = './output/yt_short.mp4'
-                console.log(video);
-                if (video) {
-                    const file = await get_vid(vid_file);
-                    await interaction.editReply({
-                        content: `here's ur vid bud <@${interaction.user.id}>`,
-                            files: [{
-                            attachment: file,
-                            contentType: "video/mp4",
-                            name: "fked_mc_download.mp4",
-                    }] });
-                    delete_file(vid_file)
-                }
-                else if (!video) {
-                    interaction.reply("Error downloading video")
-                }
+                interaction.reply("use /dl command for youtube u rat monkey boy, always crashing my shit i swear....")
             } catch (error) {
                 console.error("error: ", error)
                 if (error.rawError.message == "Request entity too large") {
