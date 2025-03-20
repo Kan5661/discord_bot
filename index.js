@@ -25,7 +25,7 @@ async function sendShutdownMessage(message) {
   if (!client.isReady()) return;
 
   const channel = client.channels.cache.filter(
-    channel => channel.name === "general");
+    channel => channel.name === "memes");
 
   if (channel.size > 0) {
     const promises = [];
