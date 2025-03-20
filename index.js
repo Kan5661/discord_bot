@@ -1,11 +1,10 @@
 const { Client, IntentsBitField } = require("discord.js");
 const { rand_choice, yt_download, universal_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, count } = require("./utils");
+    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from } = require("./utils");
 const cron = require("node-cron");
 const dotenv = require("dotenv");
 const fs = require('fs')
 const quotes = require("./quotes.json")
-const download_data = require('./usage.json')
 
 
 dotenv.config();
@@ -22,22 +21,65 @@ const client = new Client({
 
 let quote = get_quote()
 
+async function sendShutdownMessage(message) {
+  if (!client.isReady()) return;
+
+  const channel = client.channels.cache.filter(
+    channel => channel.name === "general");
+
+  if (channel.size > 0) {
+    const promises = [];
+
+    channel.forEach(channel => {
+      promises.push(
+        channel.send(message)
+          .catch(err => console.error(`Failed to send shutdown message to ${channel.name} in ${channel.guild.name}:`, err))
+      );
+    });
+
+    await Promise.allSettled(promises);
+  }
+}
+
+process.on('SIGINT', async () => {
+  console.log('Received SIGINT (Ctrl+C). Shutting down...');
+  await sendShutdownMessage('Bot is shutting down (manual termination)');
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM. Shutting down...');
+  await sendShutdownMessage('Bot is shutting down (termination signal)');
+  process.exit(0);
+});
+
+process.on('uncaughtException', async (error) => {
+  console.error('Uncaught Exception:', error);
+  await sendShutdownMessage('Bot is shutting down due to an error');
+  process.exit(1);
+});
+
+process.on('unhandledRejection', async (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  await sendShutdownMessage('Bot is shutting down due to an unhandled promise rejection');
+  process.exit(1);
+});
+
 
 client.on("ready", (c) => {
     console.log(`BOT ${c.user.tag} is online`);
-});
+    const server = client.guilds.cache.get(process.env.SERVER_ID)
+    if (server) {
+        const channel = server.channels.cache.find(channel => channel.name == "general")
+        if (channel) {
+            channel.send("Absolute Cinema is online <:Happy:860567775138414633>")
+        }
+    }
+ });
 
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
-
-    if (interaction.commandName == "download_stats") {
-        let message = "How many videos sent by users: \n"
-        for (let key in download_data) {
-            message += `${key}: ${download_data[key]} \n`
-        }
-        interaction.reply(message)
-    }
 
     if (interaction.commandName == "coin_flip") {
         if (Math.random() < 0.5) {
@@ -56,9 +98,8 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "vid") {
-        count(interaction.member.user.username)
         let url = interaction.options.get('url').value;
-
+        console.log("download from: " + url)
         // yt shorts
         if (url.includes("youtube.com") || url.includes("youtu.be")) {
 	    console.log("downloading: " + url)
@@ -200,7 +241,6 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "dl") {
-        count(interaction.member.user.username)
 
         try {
             const download_url = interaction.options.get('url').value;
