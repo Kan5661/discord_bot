@@ -37,10 +37,6 @@ const commands = [
     {
         name: "random_quote",
         description: "CONSTANT wisdom just for you"
-    },
-    {
-        name: "download_stats",
-        description: ":eyes:"
     }
 ]
 
