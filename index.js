@@ -24,9 +24,10 @@ let quote = get_quote()
 
 async function sendShutdownMessage(message) {
   if (!client.isReady()) return;
+  const guild_id = await client.guilds.fetch(SERVER_ID)
 
   const channel = client.channels.cache.filter(
-    channel => channel.name === "memes" && process.env.ENVIRONMENT !== "TESTING");
+    channel => channel.name === "memes" && guild_id == SERVER_ID);
 
   if (channel.size > 0) {
     const promises = [];
@@ -67,10 +68,11 @@ process.on('unhandledRejection', async (reason, promise) => {
 });
 
 
-client.on("ready", (c) => {
+client.on("ready", async (c) => {
     console.log(`BOT ${c.user.tag} is online`);
+    const guild_id = await client.guilds.fetch(SERVER_ID)
     const server = client.guilds.cache.get(SERVER_ID)
-    if (server && process.env.ENVIRONMENT !== "TESTING") {
+    if (server && guild_id == SERVER_ID) {
         const channel = server.channels.cache.find(channel => channel.name == "memes")
         if (channel) {
             channel.send("Absolute Cinema is online <:Happy:860567775138414633>")
