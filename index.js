@@ -6,7 +6,6 @@ const dotenv = require("dotenv");
 const fs = require('fs')
 const quotes = require("./quotes.json")
 
-const SERVER_ID = process.env.ENV == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
 
 
 dotenv.config();
@@ -19,8 +18,8 @@ const client = new Client({
     ],
 });
 
-
-
+const SERVER_ID = process.env.ENVIRONMENT == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
+console.log("Env: ", process.env.ENVIRONMENT)
 let quote = get_quote()
 
 async function sendShutdownMessage(message) {

@@ -1,7 +1,7 @@
 const { REST, Routes, ApplicationCommandOptionType } = require('discord.js');
 require('dotenv').config();
 
-const SERVER_ID = process.env.ENV == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
+const SERVER_ID = process.env.ENVIRONMENT == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
 
 const commands = [
     {
