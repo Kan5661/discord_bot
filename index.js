@@ -6,6 +6,8 @@ const dotenv = require("dotenv");
 const fs = require('fs')
 const quotes = require("./quotes.json")
 
+const SERVER_ID = process.env.ENV == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
+
 
 dotenv.config();
 const client = new Client({
@@ -25,7 +27,7 @@ async function sendShutdownMessage(message) {
   if (!client.isReady()) return;
 
   const channel = client.channels.cache.filter(
-    channel => channel.name === "memes");
+    channel => channel.name === "memes" && process.env.ENV !== "TESTING");
 
   if (channel.size > 0) {
     const promises = [];
@@ -68,7 +70,7 @@ process.on('unhandledRejection', async (reason, promise) => {
 
 client.on("ready", (c) => {
     console.log(`BOT ${c.user.tag} is online`);
-    const server = client.guilds.cache.get(process.env.SERVER_ID)
+    const server = client.guilds.cache.get(SERVER_ID)
     if (server) {
         const channel = server.channels.cache.find(channel => channel.name == "memes")
         if (channel) {

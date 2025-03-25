@@ -1,6 +1,8 @@
 const { REST, Routes, ApplicationCommandOptionType } = require('discord.js');
 require('dotenv').config();
 
+const SERVER_ID = process.env.ENV == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
+
 const commands = [
     {
         name: "vid",
@@ -46,7 +48,7 @@ const rest = new REST({ version: '10' }).setToken(process.env.BOT_TOKEN);
     try {
         console.log('registering slash commands')
         await rest.put(
-            Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.SERVER_ID),
+            Routes.applicationGuildCommands(process.env.CLIENT_ID, SERVER_ID),
             { body: commands },
         )
 
