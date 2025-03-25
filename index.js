@@ -23,8 +23,7 @@ console.log("Env: ", process.env.ENVIRONMENT)
 let quote = get_quote()
 
 async function sendShutdownMessage(message) {
-  if (!client.isReady()) return;
-  const guild_id = await client.guilds.fetch(SERVER_ID)
+  if (!client.isReady() || process.env.ENVIRONMENT == "TESTING") return;
 
   const channel = client.channels.cache.filter(
     channel => channel.name === "memes" && guild_id == SERVER_ID);
@@ -70,9 +69,9 @@ process.on('unhandledRejection', async (reason, promise) => {
 
 client.on("ready", async (c) => {
     console.log(`BOT ${c.user.tag} is online`);
-    const guild_id = await client.guilds.fetch(SERVER_ID)
     const server = client.guilds.cache.get(SERVER_ID)
-    if (server && guild_id == SERVER_ID) {
+    if (process.env.ENVIRONMENT == "TESTING") return
+    if (server) {
         const channel = server.channels.cache.find(channel => channel.name == "memes")
         if (channel) {
             channel.send("Absolute Cinema is online <:Happy:860567775138414633>")
