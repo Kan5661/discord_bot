@@ -70,7 +70,6 @@ process.on('unhandledRejection', async (reason, promise) => {
 client.on("ready", async (c) => {
     console.log(`BOT ${c.user.tag} is online`);
     const server = client.guilds.cache.get(SERVER_ID)
-    if (process.env.ENVIRONMENT == "TESTING") return
     if (server) {
         const channel = server.channels.cache.find(channel => channel.name == "memes")
         if (channel) {
