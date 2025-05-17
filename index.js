@@ -224,12 +224,12 @@ client.on('interactionCreate', async (interaction) => {
                     }]
                 });
             } else {
-                interaction.editReply("An issue occurred while downloading video. Vid size too large?");
+                interaction.editReply("An issue occurred while downloading video. Vid size too large?, target video size: ", video_file_size, " MB");
 
             }
         } catch (error) {
             console.error("Error in dl command:", error);
-                interaction.editReply("exceed vid size limit");
+                interaction.editReply("exceed vid size limit, target video size: ", video_file_size, " MB");
 
         }
         const file_in_output = await check_dir_for_file('./output');
