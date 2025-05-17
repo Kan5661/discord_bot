@@ -24,8 +24,8 @@ const universal_download = async (url) => {
     console.log(`Downloading from ${url}`)
     const output = await youtubedl(url, {
         mergeOutputFormat: 'mp4',
-        // maxFilesize: "50M", // Cancle download if video over 50Mb
-        format: "b[filesize<50M] / w", // downloads best video with audio available under 50Mb
+        maxFilesize: "50M", // Cancle download if video over 50Mb
+        // format: "b[filesize<50M] / w", // downloads best video with audio available under 50Mb
         output: "./output/output.%(ext)s", // File path and set file name
         // defaultSearch: "ytsearch"
     })

@@ -22,50 +22,6 @@ const SERVER_ID = process.env.ENVIRONMENT == "TESTING"? process.env.TEST_SERVER_
 console.log("Env: ", process.env.ENVIRONMENT)
 let quote = get_quote()
 
-async function sendShutdownMessage(message) {
-  if (!client.isReady() || process.env.ENVIRONMENT == "TESTING") return;
-
-  const channel = client.channels.cache.filter(
-    channel => channel.name === "memes" && guild_id == SERVER_ID);
-
-  if (channel.size > 0) {
-    const promises = [];
-
-    channel.forEach(channel => {
-      promises.push(
-        channel.send(message)
-          .catch(err => console.error(`Failed to send shutdown message to ${channel.name} in ${channel.guild.name}:`, err))
-      );
-    });
-
-    await Promise.allSettled(promises);
-  }
-}
-
-process.on('SIGINT', async () => {
-  console.log('Received SIGINT (Ctrl+C). Shutting down...');
-  await sendShutdownMessage('Bot is shutting down (manual termination)');
-  process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-  console.log('Received SIGTERM. Shutting down...');
-  await sendShutdownMessage('Bot is shutting down (termination signal)');
-  process.exit(0);
-});
-
-process.on('uncaughtException', async (error) => {
-  console.error('Uncaught Exception:', error);
-  await sendShutdownMessage('Bot is shutting down due to an error');
-  process.exit(1);
-});
-
-process.on('unhandledRejection', async (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  await sendShutdownMessage('Bot is shutting down due to an unhandled promise rejection');
-  process.exit(1);
-});
-
 
 client.on("ready", async (c) => {
     console.log(`BOT ${c.user.tag} is online`);
