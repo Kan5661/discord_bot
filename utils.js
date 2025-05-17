@@ -135,7 +135,7 @@ const getFileSize = (filePath) => {
     try {
         const stats = fs.statSync(filePath);
         const fileSizeInBytes = stats.size;
-        return fileSizeInBytes / 1024 * 1024;
+        return (fileSizeInBytes / 1024 * 1024);
     } catch (err) {
         console.error('Error getting file size:', err);
         return null;
