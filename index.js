@@ -198,6 +198,7 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "dl") {
+        let video_file_size = 0; // declare outside for global access in this scope
 
         try {
             const download_url = interaction.options.get('url').value;
@@ -205,12 +206,13 @@ client.on('interactionCreate', async (interaction) => {
             await interaction.reply("downloading video.....");
             const res = await universal_download(url=download_url);
             console.log(res)
+
             const video_file_exist = fs.existsSync(file_path)
+            video_file_size = getFileSize(file_path)  // assign inside try
+            console.log("file size: ", video_file_size, ' MB')
 
             if (res && video_file_exist) {
                 console.log("sending file to discord")
-                const video_file_size = getFileSize(file_path)
-                console.log("file size: ", video_file_size, ' MB')
                 const file = await fs.promises.readFile(file_path);
                 if (!file) {
                     throw new Error("Failed to read video file");
@@ -224,16 +226,15 @@ client.on('interactionCreate', async (interaction) => {
                     }]
                 });
             } else {
-                interaction.editReply("An issue occurred while downloading video. Vid size too large?, target video size: ", video_file_size, " MB");
-
+                await interaction.editReply(`An issue occurred while downloading video. Vid size too large? Target video size: ${video_file_size} MB. Discord's upload limit is 50MB`);
             }
         } catch (error) {
             console.error("Error in dl command:", error);
-                interaction.editReply("exceed vid size limit, target video size: ", video_file_size, " MB");
-
+            await interaction.editReply(`Exceed vid size limit, target video size: ${video_file_size} MB. Discord upload limit is 50MB`);
         }
+
         const file_in_output = await check_dir_for_file('./output');
-        if (file_in_output) delete_all_file_from('./output')
+        if (file_in_output) delete_all_file_from('./output');
     }
 
 });
