@@ -1,13 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch')
-const ytdl = require('ytdl-core');
 const { promisify } = require('util');
 const stream = require('stream');
-const { tikdown, ndown, ytdown, twitterdown } = require("nayan-media-downloader")
 const pipeline = promisify(stream.pipeline);
 const quotes = require('./quotes.json')
 const youtubedl = require('youtube-dl-exec')
+
 
 const rand_choice = (choices) => {
     var index = Math.floor(Math.random() * choices.length);
@@ -21,91 +20,36 @@ const get_quote = () => {
 }
 
 const universal_download = async (url) => {
-    console.log(`Downloading from ${url}`)
-    const output = await youtubedl(url, {
-        mergeOutputFormat: 'mp4',
-        maxFilesize: "50M", // Cancle download if video over 50Mb
-        // format: "b[filesize<50M] / w", // downloads best video with audio available under 50Mb
-        output: "./output/output.%(ext)s", // File path and set file name
-        // defaultSearch: "ytsearch"
-    })
-    return output
-}
+    try {
+        console.log(`Downloading from ${url}`);
+        
+        // Validate URL format
+        if (!url || typeof url !== 'string') {
+            throw new Error('Invalid URL provided');
+        }
 
-const yt_download = (url) => {
-    return new Promise((resolve, reject) => {
-        const out_path = './output/yt_short.mp4';
-        const writeStream = fs.createWriteStream(out_path);
+        // Ensure output directory exists
+        const outputDir = './output';
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
 
-        writeStream.on('finish', () => {
-            resolve(true); // Resolve the promise with true when the write operation finishes
+        const output = await youtubedl(url, {
+            mergeOutputFormat: 'mp4',
+            maxFilesize: "50M",
+            output: "./output/output.%(ext)s",
+            noPlaylist: true, // Prevent downloading entire playlists
+            retries: 2,
+            // Set reasonable timeout
+            socketTimeout: 30000,
         });
-
-        writeStream.on('error', (error) => {
-            reject(error); // Reject the promise with an error if there's an error during the write operation
-        });
-
-        ytdl(url, { filter: 'audioandvideo' }).pipe(writeStream);
-    });
-};
-
-const get_yt_download_url = async (url) => {
-    try {
-        const info = await ytdown(url)
-        console.log(info)
-        return info.data.video
-    }
-    catch (error) {
-        console.error(error)
-        return null
-    }
-}
-
-const get_insta_download_url = async (url) => {
-    try {
-        const info = await ndown(url)
-        return info.data[0].url
-    }
-    catch (error) {
-        console.error(error)
-        return null
-    }
-}
-
-const get_tiktok_download_url = async (url) => {
-    try {
-        const info = await tikdown(url)
-        console.log(info)
-        return info.data.video
-    }
-    catch (error) {
-        console.error(error)
-        return null
-    }
-}
-
-const get_twitter_download_url = async (url) => {
-    try {
-        const info = await twitterdown(url)
-        console.log(info)
-        return info.data.HD
-    }
-    catch (error) {
-        console.error(error)
-        return null
-    }
-}
-
-const get_vid = async (filePath) => {
-    try {
-        // Note: using readFile, not readFileSync
-        const file = await fs.promises.readFile(filePath);
-        return file;
+        
+        return output;
     } catch (error) {
-        console.error("Error reading file:", error);
-        return null;
+        console.error('Error in universal_download:', error.message);
+        throw error; // Re-throw to be handled by caller
     }
-}
+};
 
 
 const delete_file = (delete_file_path) => {
@@ -119,42 +63,80 @@ const delete_file = (delete_file_path) => {
 }
 
 const delete_all_file_from = (dir) => {
-    fs.readdir(dir, (err, files) => {
-        if (err) throw err;
+    return new Promise((resolve, reject) => {
+        fs.readdir(dir, (err, files) => {
+            if (err) {
+                console.error('Error reading directory for cleanup:', err);
+                resolve(); // Don't reject, just resolve to prevent crashes
+                return;
+            }
 
-        for (const file of files) {
-        fs.unlink(path.join(dir, file), err => {
-            if (err) throw err;
+            if (files.length === 0) {
+                resolve();
+                return;
+            }
+
+            let deletedCount = 0;
+            const totalFiles = files.length;
+
+            files.forEach(file => {
+                fs.unlink(path.join(dir, file), (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error(`Error deleting file ${file}:`, unlinkErr);
+                    } else {
+                        console.log(`Deleted file: ${file}`);
+                    }
+                    
+                    deletedCount++;
+                    if (deletedCount === totalFiles) {
+                        console.log("File cleanup completed");
+                        resolve();
+                    }
+                });
+            });
         });
-        }
     });
-    console.log("file deleted")
-}
+};
+
 
 const getFileSize = (filePath) => {
     try {
+        if (!fs.existsSync(filePath)) {
+            console.warn(`File does not exist: ${filePath}`);
+            return 0;
+        }
+        
         const stats = fs.statSync(filePath);
         const fileSizeInBytes = stats.size;
-            const sizeMB = parseFloat(fileSizeInBytes / (1024 * 1024).toFixed(2))
-        return (sizeMB);
+        const sizeMB = parseFloat((fileSizeInBytes / (1024 * 1024)).toFixed(2));
+        return sizeMB;
     } catch (err) {
         console.error('Error getting file size:', err);
-        return null;
+        return 0; // Return 0 instead of null to prevent NaN issues
     }
-}
+};
 
-const check_dir_for_file = (path) => {
-    return new Promise((resolve, reject) => {
-        fs.readdir(path, (err, files) => {
-            if (err) {
-                console.error('Error reading directory:', err);
-                reject(false);
-            } else if (files.length === 0) {
+
+const check_dir_for_file = (dirPath) => {
+    return new Promise((resolve) => { // Remove reject parameter to prevent crashes
+        try {
+            if (!fs.existsSync(dirPath)) {
                 resolve(false);
-            } else {
-                resolve(true);
+                return;
             }
-        });
+
+            fs.readdir(dirPath, (err, files) => {
+                if (err) {
+                    console.error('Error reading directory:', err);
+                    resolve(false); // Resolve false instead of rejecting
+                } else {
+                    resolve(files.length > 0);
+                }
+            });
+        } catch (error) {
+            console.error('Error in check_dir_for_file:', error);
+            resolve(false);
+        }
     });
 };
 
@@ -178,5 +160,4 @@ const download_file_from_url = async (url, filePath) => {
 };
 
 
-module.exports = { rand_choice, universal_download, yt_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, getFileSize };
+module.exports = { rand_choice, universal_download, delete_file, download_file_from_url, get_quote, check_dir_for_file, delete_all_file_from, getFileSize };

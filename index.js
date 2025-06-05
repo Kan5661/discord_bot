@@ -1,11 +1,19 @@
 const { Client, IntentsBitField } = require("discord.js");
-const { rand_choice, yt_download, universal_download, get_vid, delete_file, get_insta_download_url, download_file_from_url,
-    get_tiktok_download_url, get_twitter_download_url, get_yt_download_url, get_quote, check_dir_for_file, delete_all_file_from, getFileSize } = require("./utils");
+const { universal_download, get_quote, check_dir_for_file, delete_all_file_from, getFileSize } = require("./utils");
 const cron = require("node-cron");
 const dotenv = require("dotenv");
 const fs = require('fs')
-const quotes = require("./quotes.json")
 
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    // Don't exit the process, just log the error
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    // Don't exit the process, just log the error
+});
 
 
 dotenv.config();
@@ -18,7 +26,7 @@ const client = new Client({
     ],
 });
 
-const SERVER_ID = process.env.ENVIRONMENT == "TESTING"? process.env.TEST_SERVER_ID : process.env.SERVER_ID
+const SERVER_ID = process.env.ENVIRONMENT == "TESTING" ? process.env.TEST_SERVER_ID : process.env.SERVER_ID
 console.log("Env: ", process.env.ENVIRONMENT)
 let quote = get_quote()
 
@@ -32,7 +40,7 @@ client.on("ready", async (c) => {
             channel.send("Absolute Cinema is online <:Happy:860567775138414633>")
         }
     }
- });
+});
 
 
 client.on('interactionCreate', async (interaction) => {
@@ -55,186 +63,128 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (interaction.commandName == "vid") {
-        let url = interaction.options.get('url').value;
-        console.log("download from: " + url)
-        // yt shorts
-        if (url.includes("youtube.com") || url.includes("youtu.be")) {
-	    console.log("downloading: " + url)
-            try {
-                interaction.reply("use /dl command for youtube u rat monkey boy, always crashing my shit <a:pug_dance:990680940172951612>")
-            } catch (error) {
-                console.error("error: ", error)
-                if (error.rawError.message == "Request entity too large") {
-                    interaction.editReply("video exceed file size limit")
-                }
-                else interaction.editReply("an issue occured while downloading video")
+        let video_file_size = 0;
+        const file_path = './output/output.mp4';
+        let replyMessage = null;
+
+        try {
+            const download_url = interaction.options.get('url')?.value;
+
+            // Validate URL
+            if (!download_url) {
+                await interaction.reply("❌ Please provide a valid URL.");
+                return;
             }
-            return
-        }
 
+            // Send initial reply
+            replyMessage = await interaction.reply("⏳ Downloading video...");
 
-        // insta reels / fb post
-        if (url.includes("instagram.com/reel") || url.includes("www.facebook.com")) {
-            interaction.reply("downloading video....")
-            let video
-
+            // Wrap universal_download in additional error handling
+            let downloadResult = null;
             try {
-                const download_url = await get_insta_download_url(url)
-                if (!download_url) {
-                    interaction.editReply("unable to access url")
-                    return
-                }
-                const vid_file = './output/insta_reel.mp4'
+                downloadResult = await Promise.race([
+                    universal_download(download_url),
+                    new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Download timeout')), 60000) // 60 second timeout
+                    )
+                ]);
+            } catch (downloadError) {
+                console.error("Download error:", downloadError);
+                await interaction.editReply("❌ Failed to download video. The URL might be invalid or the video might be too large.");
+                return;
+            }
 
+            // Check if file exists and get size safely
+            let video_file_exist = false;
+            try {
+                video_file_exist = fs.existsSync(file_path);
+                if (video_file_exist) {
+                    video_file_size = getFileSize(file_path) || 0;
+                    console.log("File size:", video_file_size, 'MB');
+                }
+            } catch (fsError) {
+                console.error("File system error:", fsError);
+                await interaction.editReply("❌ Error accessing downloaded file.");
+                return;
+            }
+
+            // Validate file size
+            if (video_file_size > 50) {
+                await interaction.editReply(`❌ Video too large: ${video_file_size.toFixed(2)} MB. Discord limit is 50MB.`);
+                return;
+            }
+
+            if (downloadResult && video_file_exist && video_file_size > 0) {
                 try {
-                    video = await download_file_from_url(download_url, vid_file)
-                    if (video) {
-                        const file = await get_vid(vid_file);
-                        await interaction.editReply({
-                            content: `here's ur vid bud <@${interaction.user.id}>`,
+                    console.log("Sending file to Discord");
+
+                    // Check file size before reading into memory
+                    const stats = fs.statSync(file_path);
+                    if (stats.size > 50 * 1024 * 1024) { // 50MB in bytes
+                        await interaction.editReply(`❌ File too large: ${video_file_size.toFixed(2)} MB`);
+                        return;
+                    }
+
+                    // Read file with error handling
+                    const file = await fs.promises.readFile(file_path).catch(readError => {
+                        console.error("File read error:", readError);
+                        throw new Error("Failed to read video file");
+                    });
+
+                    if (!file || file.length === 0) {
+                        throw new Error("Downloaded file is empty");
+                    }
+                    await Promise.race([
+                        interaction.editReply({
+                            content: `Here's your video bud <@${interaction.user.id}> - ${video_file_size.toFixed(2)} MB`,
                             files: [{
                                 attachment: file,
                                 contentType: "video/mp4",
-                                name: "fked_mc_download.mp4",
-                        }] });
-                        delete_file(vid_file)
-                    }
+                                name: "downloaded_video.mp4",
+                            }]
+                        }),
+                        new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error('Upload timeout')), 30000) // 30 second timeout
+                        )
+                    ]);
+
+                } catch (uploadError) {
+                    console.error("Upload error:", uploadError);
+                    await interaction.editReply(`❌ Failed to upload video. Size: ${video_file_size.toFixed(2)} MB`);
                 }
-                catch (error) {
-                    console.error("error: ", error)
-                    interaction.editReply("an issue occured while downloading video")
-                    return
-                }
-
-            } catch (error) {
-                console.error("error: ", error)
-                if (error.rawError.message == "Request entity too large") {
-                    interaction.editReply("video exceed file size limit")
-                }
-                else interaction.editReply("error : (")
-            }
-
-            return
-        }
-        // tiktok
-        if (url.includes("tiktok.com")) {
-            interaction.reply("downloading video....")
-
-            try {
-                const download_url = await get_tiktok_download_url(url)
-                if (!download_url) {
-                    interaction.editReply("unable to access url")
-                    return
-                }
-                const vid_file = './output/tik_tok.mp4'
-                const video = await download_file_from_url(download_url, vid_file)
-                console.log("download url: " + video)
-                if (video) {
-                    const file = await get_vid(vid_file);
-                    await interaction.editReply({
-                        content: `here's ur vid bud <@${interaction.user.id}>`,
-                        files: [{
-                            attachment: file,
-                            contentType: "video/mp4",
-                            name: "fked_mc_download.mp4",
-                    }] });
-                    delete_file(vid_file)
-                }
-
-            } catch (error) {
-                console.error("error: ", error)
-                if (error.rawError.message == "Request entity too large") {
-                    interaction.editReply("video exceed file size limit")
-                }
-                else interaction.editReply("an issue occured while downloading video")
-            }
-
-            return
-        }
-
-        if (url.includes("twitter.com") || url.includes("x.com")) {
-            if (url.includes("x.com")) {
-                url = url.replace("x.com", "twitter.com")
-            }
-            console.log(url)
-            interaction.reply("downloading video....")
-
-            try {
-                const download_url = await get_twitter_download_url(url)
-                if (!download_url) {
-                    interaction.editReply("unable to access url")
-                    return
-                }
-                const vid_file = './output/tweet.mp4'
-                const video = await download_file_from_url(download_url, vid_file)
-                console.log("download url: " + video)
-                if (video) {
-                    const file = await get_vid(vid_file);
-                    await interaction.editReply({
-                        content: `here's ur vid bud <@${interaction.user.id}>`,
-                        files: [{
-                            attachment: file,
-                            contentType: "video/mp4",
-                            name: "fked_mc_download.mp4",
-                    }] });
-                    delete_file(vid_file)
-                }
-
-            } catch (error) {
-                console.error("error: ", error)
-                if (error.rawError.message == "Request entity too large") {
-                    interaction.editReply("video exceed file size limit")
-                }
-                else interaction.editReply("an issue occured while downloading video")
-            }
-
-            return
-        }
-
-        else {
-            console.log("url not valid");
-            await interaction.reply("bad link");
-        }
-    }
-
-    if (interaction.commandName == "dl") {
-        let video_file_size = 0; // declare outside for global access in this scope
-
-        try {
-            const download_url = interaction.options.get('url').value;
-            const file_path = './output/output.mp4';
-            await interaction.reply("downloading video.....");
-            const res = await universal_download(url=download_url);
-            console.log(res)
-
-            const video_file_exist = fs.existsSync(file_path)
-            video_file_size = getFileSize(file_path)  // assign inside try
-            console.log("file size: ", video_file_size, ' MB')
-
-            if (res && video_file_exist) {
-                console.log("sending file to discord")
-                const file = await fs.promises.readFile(file_path);
-                if (!file) {
-                    throw new Error("Failed to read video file");
-                }
-                await interaction.editReply({
-                    content: `here's ur vid bud <@${interaction.user.id}>`,
-                    files: [{
-                        attachment: file,
-                        contentType: "video/mp4",
-                        name: "fked_mc_download.mp4",
-                    }]
-                });
             } else {
-                await interaction.editReply(`An issue occurred while downloading video. Vid size too large? Target video size: ${video_file_size} MB. Discord's upload limit is 50MB`);
+                const errorMsg = !downloadResult ? "Download failed" :
+                    !video_file_exist ? "File not found after download" :
+                        "Downloaded file is empty";
+                await interaction.editReply(`❌ ${errorMsg}. Video size: ${video_file_size.toFixed(2)} MB`);
             }
-        } catch (error) {
-            console.error("Error in dl command:", error);
-            await interaction.editReply(`Exceed vid size limit, target video size: ${video_file_size} MB. Discord upload limit is 50MB`);
-        }
 
-        const file_in_output = await check_dir_for_file('./output');
-        if (file_in_output) delete_all_file_from('./output');
+        } catch (error) {
+            console.error("Critical error in vid command:", error);
+
+            // Ensure we can still respond to the user
+            try {
+                if (replyMessage) {
+                    await interaction.editReply(`❌ An unexpected error occurred. Please try again later.`);
+                } else {
+                    await interaction.reply(`❌ An unexpected error occurred. Please try again later.`);
+                }
+            } catch (replyError) {
+                console.error("Failed to send error message to user:", replyError);
+            }
+        } finally {
+            // Cleanup - always runs regardless of success/failure
+            try {
+                const file_in_output = await check_dir_for_file('./output');
+                if (file_in_output) {
+                    delete_all_file_from('./output');
+                    console.log("Cleanup completed");
+                }
+            } catch (cleanupError) {
+                console.error("Cleanup error:", cleanupError);
+                // Don't let cleanup errors crash the process
+            }
+        }
     }
 
 });
