@@ -144,7 +144,7 @@ client.on('interactionCreate', async (interaction) => {
                             }]
                         }),
                         new Promise((_, reject) =>
-                            setTimeout(() => reject(new Error('Upload timeout')), 30000) // 30 second timeout
+                            setTimeout(() => reject(new Error('Upload timeout')), 60000) // 30 second timeout
                         )
                     ]);
 
