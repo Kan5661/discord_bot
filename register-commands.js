@@ -17,18 +17,6 @@ const commands = [
         ]
     },
     {
-        name: "dl",
-        description: "download and sent video to chat. Works for almost any website you can think of",
-        options: [
-            {
-                name: 'url',
-                description: "link",
-                type: ApplicationCommandOptionType.String,
-                required: true
-            }
-        ]
-    },
-    {
         name: "coin_flip",
         description: "flips a coin"
     },
